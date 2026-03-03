@@ -1,0 +1,767 @@
+<!DOCTYPE html><html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Government &amp; Business — ARU Lecture 7</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{min-height:100vh;background:#f5f2e8!important;font-family:'Source Sans 3',Arial,sans-serif;color:#1a2744;}
+#appHeader{background:#1a2744;color:#fff;padding:10px 18px;display:none;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;box-shadow:0 6px 32px rgba(26,39,68,.18);}
+.hlogo{font-family:'Playfair Display',serif;font-size:18px;color:#c9a84c;letter-spacing:1px;}
+.htitle{font-size:12px;opacity:.8;margin-top:2px;}
+.htimer{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:7px;padding:5px 12px;font-size:17px;font-weight:700;font-family:monospace;letter-spacing:2px;color:#fff;}
+.htimer.warn{color:#f1c40f;}.htimer.danger{color:#e74c3c;animation:blink 1s infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.5}}
+.hbadge{background:#c9a84c;color:#1a2744;border-radius:20px;padding:3px 12px;font-size:12px;font-weight:700;}
+#progressBar{background:#243358;padding:8px 18px;display:none;}
+.ptrack{background:rgba(255,255,255,.18);border-radius:8px;height:7px;overflow:hidden;}
+.pfill{height:100%;background:linear-gradient(90deg,#c9a84c,#e8c96a);border-radius:8px;transition:width .5s;}
+.plabels{display:flex;justify-content:space-between;margin-top:5px;}
+.plabel{font-size:10px;color:rgba(255,255,255,.55);font-weight:500;}
+.plabel.done{color:#c9a84c;}.plabel.cur{color:#fff;font-weight:700;}
+.screen{display:none;padding:16px;max-width:860px;margin:0 auto;}
+.screen.active{display:block;}
+.card{background:#fff;border-radius:14px;box-shadow:0 6px 32px rgba(26,39,68,.18);border-top:5px solid #1a2744;padding:32px 24px;margin-top:24px;}
+.card h1{font-family:'Playfair Display',serif;font-size:26px;color:#1a2744;margin-bottom:6px;text-align:center;}
+.subtitle{text-align:center;color:#666;font-size:15px;margin-bottom:24px;}
+.mod-pills{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:20px 0;}
+@media(max-width:560px){.mod-pills{grid-template-columns:repeat(3,1fr);}}
+.mpill{background:#f5f2e8;border:2px solid #ede9d8;border-radius:9px;padding:10px 6px;text-align:center;font-size:11px;font-weight:600;color:#1a2744;}
+.mpill span{display:block;font-size:17px;font-weight:700;color:#c9a84c;margin-bottom:3px;}
+.rules{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:18px 0;}
+@media(max-width:480px){.rules{grid-template-columns:1fr;}}
+.rule{background:#f5f2e8;border-radius:8px;padding:10px 12px;font-size:13px;display:flex;gap:9px;align-items:flex-start;}
+.rule-icon{font-size:17px;flex-shrink:0;}
+.name-row{display:flex;gap:10px;max-width:400px;margin:0 auto 12px;}
+.name-in{flex:1;padding:13px 16px;border:2px solid #ede9d8;border-radius:9px;font-size:15px;font-family:inherit;outline:none;transition:border .2s;}
+.name-in:focus{border-color:#1a2744;}
+.err{color:#c0392b;font-size:12px;text-align:center;margin-top:4px;display:none;}
+.btn{display:inline-block;padding:12px 26px;border-radius:9px;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;border:none;transition:all .18s;}
+.btn-navy{background:#1a2744;color:#fff;}.btn-navy:hover{background:#243358;transform:translateY(-1px);}
+.btn-navy:disabled{background:#aaa;cursor:not-allowed;transform:none;}
+.btn-gold{background:#c9a84c;color:#1a2744;}.btn-gold:hover{background:#e8c96a;}
+.btn-sm{padding:7px 16px;font-size:13px;}.btn-hidden{display:none!important;}
+.mod-head{background:#1a2744;color:#fff;border-radius:13px 13px 0 0;padding:20px 22px;}
+.mod-num{font-size:11px;text-transform:uppercase;letter-spacing:2px;color:#c9a84c;font-weight:700;margin-bottom:3px;}
+.mod-title{font-family:'Playfair Display',serif;font-size:22px;}
+.mod-meta{display:flex;flex-wrap:wrap;gap:14px;margin-top:8px;font-size:12px;opacity:.75;}
+.mod-body{background:#fff;border-radius:0 0 13px 13px;padding:22px;box-shadow:0 3px 16px rgba(26,39,68,.14);margin-bottom:20px;}
+.sbar{background:#f5f2e8;border-radius:9px;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;border:1px solid #ede9d8;}
+.sval{font-size:20px;font-weight:700;color:#1a2744;}.slabel{font-size:11px;color:#999;margin-bottom:1px;}
+.instruct{background:#e8f4fd;border:1px solid #b8d4f0;border-radius:8px;padding:11px 14px;font-size:13px;margin-bottom:16px;color:#1a4f6e;line-height:1.5;}
+.pool{display:flex;flex-wrap:wrap;gap:8px;min-height:54px;background:#e8e4d4;border:2px dashed #c8c4b4;border-radius:9px;padding:12px;margin-bottom:18px;}
+.dcard{background:#1a2744!important;color:#fff!important;padding:9px 13px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;user-select:none;transition:all .18s;border:2px solid transparent;position:relative;touch-action:none;}
+.dcard:hover{transform:translateY(-2px);box-shadow:0 3px 16px rgba(26,39,68,.25);}
+.dcard.selected-card{border:2px solid #c9a84c!important;background:#2a3d6a!important;transform:translateY(-2px);}
+.dcard.placed-correct{background:#1e8449!important;color:#fff!important;cursor:default;border-color:#1e8449!important;}
+.dcard.placed-revealed{background:#b7860a!important;color:#fff!important;cursor:default;border-color:#c9a84c!important;opacity:.85;}
+.dcard.placed-wrong{background:#c0392b!important;color:#fff!important;animation:shake .4s;}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+.zones{display:grid;gap:13px;}
+.zones-2{grid-template-columns:1fr 1fr;}.zones-3{grid-template-columns:1fr 1fr 1fr;}.zones-4{grid-template-columns:1fr 1fr;}
+@media(max-width:500px){.zones-2,.zones-3,.zones-4{grid-template-columns:1fr;}}
+.dzone{border:2px dashed #1a2744;border-radius:9px;padding:12px;min-height:90px;transition:all .18s;cursor:pointer;}
+.dzone:hover,.dzone.hover-active{background:rgba(26,39,68,.06);border-color:#c9a84c;border-style:solid;}
+.dzone-label{font-weight:700;font-size:12px;color:#1a2744;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px;display:flex;align-items:center;gap:7px;pointer-events:none;}
+.zone-items{display:flex;flex-wrap:wrap;gap:7px;min-height:36px;pointer-events:none;}
+.know-box{margin-bottom:18px;border-radius:10px;overflow:hidden;border:2px solid #c9a84c;box-shadow:0 2px 10px rgba(201,168,76,.15);}
+.know-toggle{background:linear-gradient(135deg,#1a2744 0%,#243358 100%);color:#fff;padding:12px 16px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-size:13px;font-weight:700;user-select:none;}
+.know-toggle:hover{background:linear-gradient(135deg,#243358 0%,#2e4470 100%);}
+.know-icon{font-size:16px;margin-right:8px;}
+.know-badge{background:#c9a84c;color:#1a2744;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;margin-left:8px;}
+.know-arrow{font-size:11px;color:#c9a84c;margin-left:8px;transition:transform .3s;display:inline-block;}
+.know-body{background:#fffdf4;max-height:0;overflow:hidden;transition:max-height .4s ease,padding .3s;}
+.know-body.open{max-height:2000px;padding:16px 18px;}
+.know-body h4{font-size:13px;font-weight:700;color:#1a2744;margin:14px 0 6px;border-bottom:1px solid #ede9d8;padding-bottom:4px;}
+.know-body h4:first-child{margin-top:0;}
+.know-body p,.know-body li{font-size:13px;color:#333;line-height:1.75;}
+.know-body ul{padding-left:18px;margin:6px 0 10px;}
+.know-body li{margin-bottom:4px;}
+.kt{display:inline-block;background:#1a2744;color:#c9a84c;font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;margin-right:5px;vertical-align:middle;}
+.kw{background:#fff3cd;border-left:4px solid #c9a84c;padding:8px 12px;border-radius:0 6px 6px 0;font-size:12px;color:#5d4200;margin:8px 0;line-height:1.6;}
+.ke{background:#e8f8ef;border-left:4px solid #1e8449;padding:8px 12px;border-radius:0 6px 6px 0;font-size:12px;color:#145a32;margin:8px 0;line-height:1.6;}
+.kf{font-family:'Courier New',monospace;background:#1a2744;color:#e0e8ff;padding:12px 14px;border-radius:7px;font-size:12px;line-height:2;margin:8px 0;}
+.kf b{color:#c9a84c;}
+.review-box{background:#fff8e1;border:2px solid #c9a84c;border-radius:9px;padding:14px 16px;margin:14px 0;display:none;}
+.review-box.show{display:block;}
+.review-box h4{color:#1a2744;font-size:13px;font-weight:700;margin-bottom:8px;}
+.review-item{font-size:12px;color:#7b5800;padding:5px 0;border-bottom:1px solid #f0d890;line-height:1.5;}
+.review-item:last-child{border-bottom:none;}
+.fb{border-radius:7px;padding:11px 14px;font-size:13px;font-weight:600;margin:10px 0;display:none;gap:8px;align-items:center;line-height:1.5;}
+.fb.show{display:flex;}
+.fb-ok{background:#e8f8ef;color:#145a32;border:1px solid #82d0a0;}
+.fb-err{background:#fde8e6;color:#7b241c;border:1px solid #c0392b;}
+.fb-warn{background:#fff8e1;color:#7b5800;border:1px solid #c9a84c;}
+.pts-pop{position:fixed;right:24px;top:80px;font-size:22px;font-weight:700;color:#1e8449;pointer-events:none;opacity:0;transition:none;z-index:9999;}
+.tfq{background:#f5f2e8;border-radius:9px;padding:14px 16px;margin-bottom:12px;border:2px solid #ede9d8;transition:all .2s;}
+.tfq.ok{border-color:#1e8449;background:#e8f8ef;}.tfq.wrong{border-color:#c0392b;background:#fde8e6;}
+.tfqtext{font-size:14px;font-weight:600;margin-bottom:10px;line-height:1.5;}
+.tfbtns{display:flex;gap:9px;}
+.tfbtn{padding:7px 20px;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;border:2px solid transparent;transition:all .18s;font-family:inherit;}
+.tfbtn-t{background:#e8f8ef;color:#1e8449;border-color:#1e8449;}.tfbtn-t:hover{background:#1e8449;color:#fff;}
+.tfbtn-f{background:#fde8e6;color:#c0392b;border-color:#c0392b;}.tfbtn-f:hover{background:#c0392b;color:#fff;}
+.tfbtn:disabled{opacity:.5;cursor:not-allowed;}
+.tfbtn.sel-ok{background:#1e8449;color:#fff;}.tfbtn.sel-err{background:#c0392b;color:#fff;}
+.tf-gate{background:#1a2744;color:#fff;border-radius:9px;padding:13px 16px;text-align:center;margin:14px 0;font-size:14px;}
+.match-wrap{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+@media(max-width:520px){.match-wrap{grid-template-columns:1fr;}}
+.match-col-label{font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#888;margin-bottom:8px;text-align:center;}
+.mterms,.mdefs{display:flex;flex-direction:column;gap:7px;}
+.mterm{background:#1a2744;color:#fff;padding:9px 12px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;transition:all .18s;border:2px solid transparent;text-align:center;}
+.mterm:hover{transform:translateY(-1px);}.mterm.sel{border-color:#c9a84c;background:#2a3d6a;}
+.mterm.matched{background:#1e8449;cursor:default;}.mterm.match-revealed{background:#b7860a;cursor:default;}
+.mterm.match-err{background:#c0392b;animation:shake .4s;}
+.mdef{background:#f5f2e8;border:2px solid #ede9d8;padding:9px 12px;border-radius:7px;font-size:12px;cursor:pointer;transition:all .18s;line-height:1.4;}
+.mdef:hover{border-color:#1a2744;}.mdef.sel{border-color:#c9a84c;background:#fff8e1;}
+.mdef.matched{border-color:#1e8449;background:#e8f8ef;cursor:default;}
+.mdef.match-revealed{border-color:#c9a84c;background:#fff8e1;cursor:default;}
+.mdef.match-err{border-color:#c0392b;animation:shake .4s;}
+.ped-box{background:#1a2744;color:#fff;border-radius:9px;padding:16px 18px;margin-bottom:14px;font-size:14px;line-height:1.8;}
+.ped-input-row{display:flex;gap:9px;align-items:center;margin-top:10px;}
+.ped-input{flex:1;padding:11px 14px;border:2px solid #ede9d8;border-radius:7px;font-size:15px;font-family:inherit;outline:none;transition:border .2s;}
+.ped-input:focus{border-color:#1a2744;}.ped-input.ok{border-color:#1e8449;background:#e8f8ef;}.ped-input.err{border-color:#c0392b;}
+.sopts{display:flex;flex-direction:column;gap:9px;}
+.sopt{background:#f5f2e8;border:2px solid #ede9d8;border-radius:9px;padding:12px 16px;cursor:pointer;transition:all .18s;font-size:13px;font-weight:500;text-align:left;font-family:inherit;}
+.sopt:hover{border-color:#1a2744;background:#fff;}
+.sopt.ok{border-color:#1e8449;background:#e8f8ef;cursor:default;}
+.sopt.err{border-color:#c0392b;background:#fde8e6;cursor:default;}
+.sopt:disabled{pointer-events:none;}
+.step-indicator{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;}
+.step-dot{width:28px;height:28px;border-radius:50%;background:#ede9d8;border:2px solid #c8c4b4;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#888;}
+.step-dot.active{background:#1a2744;color:#fff;border-color:#1a2744;}
+.step-dot.done{background:#1e8449;color:#fff;border-color:#1e8449;}
+.lb{background:#fff;border-radius:11px;padding:18px;box-shadow:0 3px 16px rgba(26,39,68,.14);margin-top:20px;}
+.lb-title{font-family:'Playfair Display',serif;font-size:17px;color:#1a2744;margin-bottom:13px;display:flex;align-items:center;gap:8px;}
+.lb-row{display:flex;align-items:center;gap:11px;padding:9px 11px;border-radius:7px;margin-bottom:5px;background:#f5f2e8;}
+.lb-row.me{background:rgba(201,168,76,.18);border:1px solid #c9a84c;}
+.lb-rank{font-weight:700;font-size:15px;min-width:26px;}.lb-name{flex:1;font-weight:600;font-size:13px;}
+.lb-mod{font-size:11px;color:#999;}.lb-score{font-weight:700;font-size:15px;color:#1a2744;}
+.cert{background:#fff;border:7px double #c9a84c;border-radius:14px;padding:32px;margin:20px 0;box-shadow:0 6px 32px rgba(26,39,68,.18);text-align:center;}
+.cert-logo{font-family:'Playfair Display',serif;font-size:22px;color:#c9a84c;}
+.cert-tag{font-size:12px;text-transform:uppercase;letter-spacing:3px;color:#888;margin:6px 0 16px;}
+.cert-name{font-family:'Playfair Display',serif;font-size:30px;color:#1a2744;}
+.cert-text{font-size:14px;color:#555;margin:10px 0 18px;line-height:1.6;}
+.cert-score{font-size:48px;font-weight:700;color:#c9a84c;}.cert-score-lbl{font-size:13px;color:#888;}
+.final-mods{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:20px 0;}
+@media(max-width:480px){.final-mods{grid-template-columns:repeat(3,1fr);}}
+.fmod{background:#fff;border-radius:9px;padding:13px 8px;text-align:center;box-shadow:0 3px 16px rgba(26,39,68,.14);border-top:4px solid #1a2744;}
+.fmod-n{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:#888;}
+.fmod-s{font-size:26px;font-weight:700;color:#1a2744;}.fmod-m{font-size:11px;color:#bbb;}
+.summary-box{background:#1a2744;color:#fff;border-radius:11px;padding:18px;margin-top:20px;}
+.summary-box h3{font-family:'Playfair Display',serif;font-size:17px;margin-bottom:10px;}
+.summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;font-size:12px;line-height:1.6;}
+.divider{height:1px;background:#ede9d8;margin:18px 0;}
+#nudge{position:fixed;top:0;left:0;right:0;background:#c9a84c;color:#1a2744;text-align:center;padding:13px;font-size:15px;font-weight:700;z-index:9999;transform:translateY(-100%);transition:transform .4s;}
+#nudge.show{transform:translateY(0);}
+</style>
+</head>
+<body>
+<div id="nudge">📣 Keep going — stay focused and complete the module!</div>
+<div id="ptsPop" class="pts-pop"></div>
+<header id="appHeader">
+  <div><div class="hlogo">a.r.u.</div><div class="htitle">Government &amp; Business — Lecture 7</div></div>
+  <div style="display:flex;gap:14px;align-items:center;">
+    <div class="htimer" id="timerEl">60:00</div>
+    <div class="hbadge" id="badgeEl">Student</div>
+  </div>
+</header>
+<div id="progressBar">
+  <div class="ptrack"><div class="pfill" id="pfill" style="width:0%"></div></div>
+  <div class="plabels">
+    <span class="plabel" id="pl0">Module 1</span><span class="plabel" id="pl1">Module 2</span>
+    <span class="plabel" id="pl2">Module 3</span><span class="plabel" id="pl3">Module 4</span>
+    <span class="plabel" id="pl4">Module 5</span>
+  </div>
+</div>
+
+<!-- LANDING -->
+
+<div class="screen active" id="s-land">
+  <div class="card">
+    <div style="text-align:center;font-size:44px;margin-bottom:10px;">🏛️</div>
+    <h1>Government &amp; Business</h1>
+    <p class="subtitle">MOD010837 — Lecture 7 Interactive Activities</p>
+    <div class="mod-pills">
+      <div class="mpill"><span>1</span>Market Failures</div>
+      <div class="mpill"><span>2</span>Public Goods</div>
+      <div class="mpill"><span>3</span>Externalities</div>
+      <div class="mpill"><span>4</span>UK Gov Bodies</div>
+      <div class="mpill"><span>5</span>PED &amp; Consumers</div>
+    </div>
+    <div class="rules">
+      <div class="rule"><div class="rule-icon">⏱️</div><div><strong>60-minute timer</strong> starts when you click Start.</div></div>
+      <div class="rule"><div class="rule-icon">🎯</div><div><strong>3 attempts max</strong> — 1st=100%, 2nd=50%, 3rd=25%, then 0.</div></div>
+      <div class="rule"><div class="rule-icon">🔀</div><div><strong>Unique questions</strong> — randomly selected each session.</div></div>
+      <div class="rule"><div class="rule-icon">🏆</div><div><strong>Live leaderboard</strong> — first-attempt correct scores highest.</div></div>
+    </div>
+    <div class="name-row">
+      <input type="text" class="name-in" id="nameIn" placeholder="Enter your full name..." maxlength="40">
+      <button class="btn btn-navy" onclick="startSession()">Start ▶</button>
+    </div>
+    <div class="err" id="nameErr">Please enter your name to begin.</div>
+    <div id="landLB" class="lb" style="display:none;"><div class="lb-title">🏆 Leaderboard</div><div id="landLBBody"></div></div>
+  </div>
+</div>
+
+<!-- MODULE 1: MARKET FAILURES -->
+
+<div class="screen" id="s-m1">
+  <div class="mod-head">
+    <div class="mod-num">Module 1 of 5</div>
+    <div class="mod-title">Types of Market Failure</div>
+    <div class="mod-meta"><span>⏱ ~10 mins</span><span>🎯 100 pts</span><span>📌 Card Sort</span></div>
+  </div>
+  <div class="mod-body">
+    <div class="sbar">
+      <div><div class="slabel">MODULE SCORE</div><div class="sval" id="m1ScoreEl">0 / 100</div></div>
+      <div><div class="slabel">SCORING</div><div style="font-size:11px;color:#888;">1st✅=8pts · 2nd=4pts · 3rd=2pts · Revealed=0</div></div>
+    </div>
+    <div class="know-box">
+      <div class="know-toggle" onclick="toggleKnow(this)">
+        <span><span class="know-icon">📚</span>Knowledge Box — Market Failures<span class="know-badge">Read me first!</span></span>
+        <span class="know-arrow">▼</span>
+      </div>
+      <div class="know-body">
+        <h4>🏭 Monopoly — no competition</h4>
+        <p>One firm dominates → no pressure to improve or lower prices. Can arise naturally (e.g. water pipes) or through competition (e.g. Google). Government responds with regulation, break-up, or nationalisation.</p>
+        <div class="kw">⚠️ Temporary monopolies can be fine — rewarding innovation. The problem is permanent, entrenched power.</div>
+        <h4>🌐 Public Goods — the free rider problem</h4>
+        <p><span class="kt">Public goods</span> are <strong>non-rival</strong> (one person's use doesn't reduce availability) AND <strong>non-excludable</strong> (non-payers can't be blocked). No private firm will supply them → government must.</p>
+        <div class="ke">💡 "Public good" is a technical term. Healthcare is NOT one — it's rival and excludable.</div>
+        <h4>💨 Externalities — third-party spillovers</h4>
+        <p>A transaction affects people <em>outside</em> the deal. <strong>Negative</strong> (e.g. pollution) → market overproduces. <strong>Positive</strong> (e.g. vaccines) → market underproduces. Fix: tax negatives, subsidise positives.</p>
+      </div>
+    </div>
+    <div class="instruct">💡 Tap a <strong>card</strong> to select it (gold highlight), then tap the <strong>correct category box</strong>. <strong>8 pts</strong> 1st · <strong>4 pts</strong> 2nd · <strong>2 pts</strong> 3rd · then revealed.</div>
+    <div class="pool" id="m1Pool"></div>
+    <div class="zones zones-3">
+      <div class="dzone" onclick="zoneClick('m1','monopoly')" id="dz-m1-monopoly"><div class="dzone-label">🏭 Monopoly</div><div class="zone-items" id="zi-m1-monopoly"></div></div>
+      <div class="dzone" onclick="zoneClick('m1','publicgood')" id="dz-m1-publicgood"><div class="dzone-label">🌐 Public Good</div><div class="zone-items" id="zi-m1-publicgood"></div></div>
+      <div class="dzone" onclick="zoneClick('m1','externality')" id="dz-m1-externality"><div class="dzone-label">🏭 Externality</div><div class="zone-items" id="zi-m1-externality"></div></div>
+    </div>
+    <div class="fb" id="m1FB"></div>
+    <div class="review-box" id="m1Review"><h4>📋 Items Revealed (Study These!)</h4><div id="m1ReviewList"></div></div>
+    <div style="text-align:center;margin-top:16px;"><button class="btn btn-navy btn-hidden" id="m1Next" onclick="nextModule(1)">Continue to Module 2 →</button></div>
+  </div>
+</div>
+
+<!-- MODULE 2: PUBLIC GOODS CLASSIFICATION -->
+
+<div class="screen" id="s-m2">
+  <div class="mod-head">
+    <div class="mod-num">Module 2 of 5</div>
+    <div class="mod-title">Rival, Excludable &amp; Public Goods</div>
+    <div class="mod-meta"><span>⏱ ~12 mins</span><span>🎯 100 pts</span><span>📌 Card Sort + True/False</span></div>
+  </div>
+  <div class="mod-body">
+    <div class="sbar">
+      <div><div class="slabel">MODULE SCORE</div><div class="sval" id="m2ScoreEl">0 / 100</div></div>
+      <div><div class="slabel">PART</div><div id="m2PartEl" style="font-weight:700;color:#1a2744;">Part A</div></div>
+    </div>
+    <div class="know-box">
+      <div class="know-toggle" onclick="toggleKnow(this)">
+        <span><span class="know-icon">📚</span>Knowledge Box — Rival, Excludable &amp; Public Goods<span class="know-badge">Read me first!</span></span>
+        <span class="know-arrow">▼</span>
+      </div>
+      <div class="know-body">
+        <div class="kf">
+          <b>Rival + Excludable</b> → Private good (sandwich, car)<br>
+          <b>Non-rival + Excludable</b> → Club good (Netflix, gym)<br>
+          <b>Rival + Non-excludable</b> → Common resource (ocean fish)<br>
+          <b>Non-rival + Non-excludable</b> → Public good (street lighting)
+        </div>
+        <p><span class="kt">Rival</span> = one person's use reduces what's left for others. <span class="kt">Excludable</span> = non-payers can be blocked.</p>
+        <div class="kw">⚠️ Pure public goods are rare — most real goods (roads, healthcare) sit somewhere in between.</div>
+        <div class="ke">💡 Free rider problem: if you can't exclude non-payers, no private firm will supply the good → government steps in.</div>
+      </div>
+    </div>
+    <div id="m2pa">
+      <h3 style="font-family:'Playfair Display',serif;color:#1a2744;margin-bottom:7px;">Part A: Classify the Good</h3>
+      <div class="instruct">💡 Sort each good into the correct category. 10pts · 5pts · 2.5pts · then 0.</div>
+      <div class="pool" id="m2Pool"></div>
+      <div class="zones zones-4">
+        <div class="dzone" onclick="zoneClick('m2','private')" id="dz-m2-private"><div class="dzone-label">🛒 Private Good<br><small style="font-weight:400;font-size:10px;opacity:.7">Rival + Excludable</small></div><div class="zone-items" id="zi-m2-private"></div></div>
+        <div class="dzone" onclick="zoneClick('m2','club')" id="dz-m2-club"><div class="dzone-label">🎟 Club Good<br><small style="font-weight:400;font-size:10px;opacity:.7">Non-rival + Excludable</small></div><div class="zone-items" id="zi-m2-club"></div></div>
+        <div class="dzone" onclick="zoneClick('m2','common')" id="dz-m2-common"><div class="dzone-label">🐟 Common Resource<br><small style="font-weight:400;font-size:10px;opacity:.7">Rival + Non-excludable</small></div><div class="zone-items" id="zi-m2-common"></div></div>
+        <div class="dzone" onclick="zoneClick('m2','publicgood')" id="dz-m2-publicgood"><div class="dzone-label">🌐 Public Good<br><small style="font-weight:400;font-size:10px;opacity:.7">Non-rival + Non-excludable</small></div><div class="zone-items" id="zi-m2-publicgood"></div></div>
+      </div>
+      <div class="fb" id="m2aFB"></div>
+      <div class="review-box" id="m2aReview"><h4>📋 Items Revealed</h4><div id="m2aReviewList"></div></div>
+    </div>
+    <div id="m2pb" style="display:none;">
+      <div class="divider"></div>
+      <h3 style="font-family:'Playfair Display',serif;color:#1a2744;margin-bottom:7px;">Part B: True or False?</h3>
+      <div class="instruct">💡 6 questions on public goods &amp; market failure. 8pts · 4pts · 2pts · then 0. Need <strong>5/6</strong> to proceed.</div>
+      <div class="tf-gate">Minimum required: <strong>5/6</strong> — Current: <strong id="tfScore2">0/6</strong></div>
+      <div id="tfContainer2"></div>
+      <div class="fb" id="m2bFB"></div>
+      <div style="text-align:center;margin-top:12px;"><button class="btn btn-navy btn-hidden" id="m2Retry" onclick="loadTF2()">🔄 Retry</button></div>
+    </div>
+    <div class="divider"></div>
+    <div style="text-align:center;"><button class="btn btn-navy btn-hidden" id="m2Next" onclick="nextModule(2)">Continue to Module 3 →</button></div>
+  </div>
+</div>
+
+<!-- MODULE 3: EXTERNALITIES -->
+
+<div class="screen" id="s-m3">
+  <div class="mod-head">
+    <div class="mod-num">Module 3 of 5</div>
+    <div class="mod-title">Externalities &amp; Complex Reality</div>
+    <div class="mod-meta"><span>⏱ ~12 mins</span><span>🎯 100 pts</span><span>📌 Sort + Scenario</span></div>
+  </div>
+  <div class="mod-body">
+    <div class="sbar">
+      <div><div class="slabel">MODULE SCORE</div><div class="sval" id="m3ScoreEl">0 / 100</div></div>
+      <div><div class="slabel">PART</div><div id="m3PartEl" style="font-weight:700;color:#1a2744;">Part A</div></div>
+    </div>
+    <div class="know-box">
+      <div class="know-toggle" onclick="toggleKnow(this)">
+        <span><span class="know-icon">📚</span>Knowledge Box — Externalities &amp; Complex Reality<span class="know-badge">Read me first!</span></span>
+        <span class="know-arrow">▼</span>
+      </div>
+      <div class="know-body">
+        <h4>🔴 Negative Externalities → market overproduces</h4>
+        <p>Producer doesn't bear the full social cost. Examples: factory pollution, carbon emissions, noise, second-hand smoke. Fix: <strong>tax</strong> or <strong>regulate</strong>.</p>
+        <h4>🟢 Positive Externalities → market underproduces</h4>
+        <p>Producer doesn't capture the full social benefit. Examples: vaccines (herd immunity), education, R&amp;D spillovers, beekeeping. Fix: <strong>subsidise</strong> or <strong>provide directly</strong>.</p>
+        <h4>🧩 Complex Reality</h4>
+        <p><span class="kt">Coase</span>: if property rights are clear and transaction costs are low, parties can negotiate without government. In practice this rarely holds. Power imbalances, asymmetric information and bounded rationality all complicate things.</p>
+        <div class="kw">⚠️ Almost everything has some externality. Intervene only when the benefit outweighs the cost of intervention.</div>
+      </div>
+    </div>
+    <div id="m3pa">
+      <h3 style="font-family:'Playfair Display',serif;color:#1a2744;margin-bottom:7px;">Part A: Positive or Negative Externality?</h3>
+      <div class="instruct">💡 Sort each example into Positive or Negative externality. 10pts · 5pts · 2.5pts · then 0.</div>
+      <div class="pool" id="m3Pool"></div>
+      <div class="zones zones-2">
+        <div class="dzone" onclick="zoneClick('m3','positive')" id="dz-m3-positive"><div class="dzone-label">🟢 Positive Externality</div><div class="zone-items" id="zi-m3-positive"></div></div>
+        <div class="dzone" onclick="zoneClick('m3','negative')" id="dz-m3-negative"><div class="dzone-label">🔴 Negative Externality</div><div class="zone-items" id="zi-m3-negative"></div></div>
+      </div>
+      <div class="fb" id="m3aFB"></div>
+      <div class="review-box" id="m3aReview"><h4>📋 Items Revealed</h4><div id="m3aReviewList"></div></div>
+    </div>
+    <div id="m3pb" style="display:none;">
+      <div class="divider"></div>
+      <h3 style="font-family:'Playfair Display',serif;color:#1a2744;margin-bottom:7px;">Part B: Scenario Questions</h3>
+      <div class="instruct">💡 Read each scenario carefully and select the best answer. 25pts · 12.5pts · 6pts · then 0.</div>
+      <div id="scenContainer3"></div>
+      <div class="fb" id="m3bFB"></div>
+    </div>
+    <div class="divider"></div>
+    <div style="text-align:center;"><button class="btn btn-navy btn-hidden" id="m3Next" onclick="nextModule(3)">Continue to Module 4 →</button></div>
+  </div>
+</div>
+
+<!-- MODULE 4: UK GOVERNMENT BODIES -->
+
+<div class="screen" id="s-m4">
+  <div class="mod-head">
+    <div class="mod-num">Module 4 of 5</div>
+    <div class="mod-title">UK Government Bodies &amp; Business</div>
+    <div class="mod-meta"><span>⏱ ~10 mins</span><span>🎯 100 pts</span><span>📌 Matching</span></div>
+  </div>
+  <div class="mod-body">
+    <div class="sbar">
+      <div><div class="slabel">MODULE SCORE</div><div class="sval" id="m4ScoreEl">0 / 100</div></div>
+      <div><div class="slabel">PAIRS MATCHED</div><div id="m4PairsEl" style="font-weight:700;color:#1a2744;">0 / 8</div></div>
+    </div>
+    <div class="know-box">
+      <div class="know-toggle" onclick="toggleKnow(this)">
+        <span><span class="know-icon">📚</span>Knowledge Box — UK Government Bodies<span class="know-badge">Read me first!</span></span>
+        <span class="know-arrow">▼</span>
+      </div>
+      <div class="know-body">
+        <p>Every UK business must deal with several of these. Know what each one does.</p>
+        <div class="kf">
+          <b>Companies House</b> — registers companies, public records<br>
+          <b>HMRC</b> — collects corporation tax, VAT, income tax, NI<br>
+          <b>CMA</b> — promotes competition; investigates mergers &amp; cartels<br>
+          <b>ICO</b> — enforces UK GDPR / data protection law<br>
+          <b>HSE</b> — workplace health &amp; safety regulation<br>
+          <b>ACAS</b> — employment dispute advice &amp; resolution<br>
+          <b>Bank of England</b> — sets base rate; financial stability<br>
+          <b>Dept for Business &amp; Trade</b> — business growth &amp; trade policy<br>
+          <b>Small Business Commissioner</b> — late payment disputes
+        </div>
+        <div class="ke">💡 Sector regulators include Ofgem (energy), Ofwat (water), Ofcom (comms), FCA (finance).</div>
+      </div>
+    </div>
+    <div class="instruct">💡 Tap a <strong>body name</strong> (left) then its <strong>function</strong> (right). 12pts · 6pts · 3pts · then 0.</div>
+    <div class="match-wrap">
+      <div><div class="match-col-label">Body</div><div class="mterms" id="mTerms4"></div></div>
+      <div><div class="match-col-label">Function</div><div class="mdefs" id="mDefs4"></div></div>
+    </div>
+    <div class="fb" id="m4FB"></div>
+    <div class="review-box" id="m4Review"><h4>📋 Pairs Revealed</h4><div id="m4ReviewList"></div></div>
+    <div class="divider"></div>
+    <div style="text-align:center;"><button class="btn btn-navy btn-hidden" id="m4Next" onclick="nextModule(4)">Continue to Module 5 →</button></div>
+  </div>
+</div>
+
+<!-- MODULE 5: PED & BOUNDED RATIONALITY (SEMINAR) -->
+
+<div class="screen" id="s-m5">
+  <div class="mod-head">
+    <div class="mod-num">Module 5 of 5</div>
+    <div class="mod-title">Seminar: PED &amp; Bounded Rationality</div>
+    <div class="mod-meta"><span>⏱ ~15 mins</span><span>🎯 100 pts</span><span>📌 Calculations + Analysis</span></div>
+  </div>
+  <div class="mod-body">
+    <div class="sbar">
+      <div><div class="slabel">MODULE SCORE</div><div class="sval" id="m5ScoreEl">0 / 100</div></div>
+      <div><div class="slabel">QUESTIONS</div><div id="m5QEl" style="font-weight:700;color:#1a2744;">0 / 6</div></div>
+    </div>
+    <div class="know-box">
+      <div class="know-toggle" onclick="toggleKnow(this)">
+        <span><span class="know-icon">📚</span>Knowledge Box — Price Elasticity of Demand &amp; Bounded Rationality<span class="know-badge">Read me first!</span></span>
+        <span class="know-arrow">▼</span>
+      </div>
+      <div class="know-body">
+        <h4>📐 Price Elasticity of Demand (PED)</h4>
+        <div class="kf">
+          <b>PED = % Δ quantity ÷ % Δ price</b><br>
+          |PED| &lt; 1 → <b>Inelastic</b> (qty changes less than price)<br>
+          |PED| &gt; 1 → <b>Elastic</b> (qty changes more than price)<br><br>
+          <b>% Δ Qty = PED × % Δ Price (opposite direction)</b><br>
+          e.g. PED 2.0, price +10% → qty <b>−20%</b>
+        </div>
+        <div class="kw">⚠️ PED is technically negative, but expressed as a positive. Qty always moves in the OPPOSITE direction to price.</div>
+        <h4>🧠 Bounded Rationality — how firms exploit it</h4>
+        <p>Consumers have limited time and information. Tactics used against them:</p>
+        <ul>
+          <li><strong>Anchoring</strong> — high "original" price makes sale price look cheap</li>
+          <li><strong>Time pressure</strong> — "Lightning deals", countdowns create urgency</li>
+          <li><strong>Social proof</strong> — star ratings replace independent research</li>
+          <li><strong>Framing</strong> — "70% off" rather than the actual £ saving</li>
+        </ul>
+        <div class="ke">💡 Branding, switching costs and shrinkflation can reduce PED — consumers pay more without noticing.</div>
+      </div>
+    </div>
+    <div id="pedContainer"></div>
+    <div class="divider"></div>
+    <div style="text-align:center;"><button class="btn btn-gold btn-hidden" id="m5Next" onclick="nextModule(5)">🏁 View My Results</button></div>
+  </div>
+</div>
+
+<!-- FINAL -->
+
+<div class="screen" id="s-final">
+  <div style="text-align:center;padding:32px 16px 0;"><div style="font-size:56px;">🎓</div>
+    <h1 style="font-family:'Playfair Display',serif;font-size:28px;color:#1a2744;margin:10px 0;">Session Complete!</h1>
+  </div>
+  <div class="cert" id="certEl">
+    <div class="cert-logo">a.r.u.</div>
+    <div class="cert-tag">Certificate of Completion</div>
+    <div class="cert-name" id="certName">—</div>
+    <div class="cert-text">has successfully completed the interactive learning activities for<br><strong>Government &amp; Business — Lecture 7</strong></div>
+    <div class="cert-score" id="certScore">0</div>
+    <div class="cert-score-lbl">TOTAL POINTS OUT OF 500</div>
+  </div>
+  <div class="final-mods" id="finalMods"></div>
+  <div class="lb" id="finalLB"><div class="lb-title">🏆 Final Leaderboard</div><div id="finalLBBody"></div></div>
+  <div class="summary-box">
+    <h3>📚 Key Concepts Covered Today</h3>
+    <div class="summary-grid">
+      <div>✅ What government is and what it does</div><div>✅ Three types of market failure</div>
+      <div>✅ Monopoly: causes and government responses</div><div>✅ Public goods: rival, excludable, free rider</div>
+      <div>✅ The 2×2 classification of goods</div><div>✅ Positive and negative externalities</div>
+      <div>✅ Complex reality: Coase, power, information</div><div>✅ UK regulatory bodies for business</div>
+      <div>✅ Price elasticity of demand: elastic vs inelastic</div><div>✅ Bounded rationality and consumer tactics</div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── UTILITIES ───────────────────────────────────────────────────────────────
+function toggleKnow(t){var a=t.querySelector('.know-arrow');var b=t.nextElementSibling;if(b.classList.contains('open')){b.classList.remove('open');a.style.transform='rotate(0deg)';}else{b.classList.add('open');a.style.transform='rotate(180deg)';}}
+function calcPoints(a,m){if(a===1)return m;if(a===2)return Math.round(m*.5*100)/100;if(a===3)return Math.round(m*.25*100)/100;return 0;}
+function shuffle(a){return[...a].sort(()=>Math.random()-.5);}
+function pick(a,n){return shuffle(a).slice(0,n);}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function pickFromZones(bank,n){var r=[];for(var z in bank){pick(bank[z],n).forEach(i=>r.push({...i,zone:z}));}return shuffle(r);}
+function showFB(id,type,msg){var el=document.getElementById(id);if(!el)return;el.className='fb fb-'+(type==='ok'?'ok':type==='warn'?'warn':'err')+' show';el.innerHTML='<span></span><span>'+msg+'</span>';}
+function popPts(p){if(p<=0)return;var el=document.getElementById('ptsPop');el.textContent='+'+Math.round(p)+'pts';el.style.opacity='1';el.style.transform='translateY(0)';el.style.transition='none';setTimeout(()=>{el.style.transition='opacity 1s,transform 1s';el.style.opacity='0';el.style.transform='translateY(-30px)';},50);}
+
+// ─── DATA BANKS ──────────────────────────────────────────────────────────────
+const M1_BANK={
+  monopoly:[
+    {id:'google',text:'Google dominates search — over 90% of global queries'},
+    {id:'waterco',text:'A single company owns all water pipes in a region'},
+    {id:'microsoft',text:'Microsoft Windows has near-complete dominance of desktop OS'},
+    {id:'natgas',text:'One firm owns the national gas pipeline network'},
+    {id:'railway',text:'A single firm operates the only rail line between two cities'},
+    {id:'pharma',text:'A pharmaceutical firm holds the sole patent for a life-saving drug'},
+    {id:'amazon',text:'Amazon controls the majority of online retail and cloud infrastructure'}
+  ],
+  publicgood:[
+    {id:'streetlight',text:'Street lighting in a residential area'},
+    {id:'defence',text:'National defence protecting all citizens from invasion'},
+    {id:'fireworks',text:'Public fireworks display visible from anywhere in the town'},
+    {id:'flooddef',text:'Flood defence system protecting an entire river valley'},
+    {id:'lighthouse',text:'Lighthouse guiding ships safely past coastal rocks'},
+    {id:'publicradio',text:'BBC Radio broadcast that anyone with a radio can receive'},
+    {id:'cleanair',text:'Clean air policies that reduce pollution for all residents'}
+  ],
+  externality:[
+    {id:'pollution',text:'Factory smoke pollutes the air for nearby residents'},
+    {id:'vaccine',text:'Getting vaccinated reduces disease spread to others'},
+    {id:'construction',text:'Noisy construction causes distress to neighbouring businesses'},
+    {id:'beekeeper',text:'A beekeeper\'s bees pollinate nearby farmers\' crops for free'},
+    {id:'training',text:'Firm trains workers who then move to competitors'},
+    {id:'alcohol',text:'Excessive drinking leads to NHS costs borne by taxpayers'},
+    {id:'solar',text:'Solar panels on one house reduce local grid strain for neighbours'}
+  ]
+};
+
+const M2_BANK={
+  private:[
+    {id:'sandwich',text:'Sandwich'},
+    {id:'medicine',text:'Prescription medicine'},
+    {id:'car',text:'Car'},
+    {id:'phonedata',text:'Mobile data (when your allowance is used up, it\'s gone)'},
+    {id:'concert',text:'Concert ticket (numbered seat)'}
+  ],
+  club:[
+    {id:'netflix',text:'Netflix subscription'},
+    {id:'golfclub',text:'Private golf club membership'},
+    {id:'cabletv',text:'Cable TV channel'},
+    {id:'tollroad',text:'Uncongested toll motorway'},
+    {id:'gymapp',text:'Gym membership'}
+  ],
+  common:[
+    {id:'oceanfish',text:'Fish in international waters'},
+    {id:'parkgrass',text:'Public park lawn (congested on a sunny day)'},
+    {id:'groundwater',text:'Underground water from a shared aquifer'},
+    {id:'publicbench',text:'Popular public bench at rush hour'},
+    {id:'roadcong',text:'Congested public road during peak hours'}
+  ],
+  publicgood:[
+    {id:'natdefence',text:'National defence'},
+    {id:'streetlights',text:'Street lighting'},
+    {id:'bbc',text:'BBC World Service radio broadcast'},
+    {id:'flooddefs',text:'Flood defence scheme'},
+    {id:'knowledge',text:'Knowledge in the public domain (once published)'}
+  ]
+};
+
+const M3_BANK={
+  positive:[
+    {id:'vaccination',text:'Vaccination programme reduces community transmission'},
+    {id:'education',text:'University education produces a more skilled national workforce'},
+    {id:'bees',text:'Beekeeper\'s bees pollinate neighbouring farms\' crops'},
+    {id:'rd',text:'A firm\'s R&D leads to knowledge spillovers that benefit rivals'},
+    {id:'restoration',text:'Property owner renovates a building, improving the look of the street'},
+    {id:'publictransit',text:'New tram line reduces road congestion for car drivers'}
+  ],
+  negative:[
+    {id:'carbons',text:'Driving a car emits CO₂, contributing to climate change'},
+    {id:'factorysmoke',text:'Factory discharges pollutants into a nearby river'},
+    {id:'noise',text:'Late-night pub creates noise disturbance for residents'},
+    {id:'smoking',text:'Smoking in shared spaces exposes others to harm'},
+    {id:'congestion',text:'Driving into a city centre adds to congestion for other road users'},
+    {id:'fastfood',text:'Fast food advertising targeting children contributes to childhood obesity'}
+  ]
+};
+
+const M4_BANK=[
+  {id:'ch',term:'Companies House',def:'Registers UK companies and makes their information publicly available'},
+  {id:'hmrc',term:'HMRC',def:'Collects taxes including corporation tax, VAT and income tax on behalf of the government'},
+  {id:'cma',term:'Competition & Markets Authority',def:'Promotes competition, investigates mergers and tackles anti-competitive behaviour'},
+  {id:'ico',term:'Information Commissioner\'s Office',def:'Enforces data protection law (UK GDPR) and handles personal data complaints'},
+  {id:'hse',term:'Health & Safety Executive',def:'Regulates and enforces workplace health and safety standards'},
+  {id:'acas',term:'ACAS',def:'Provides free guidance and dispute resolution for employment and workplace issues'},
+  {id:'boe',term:'Bank of England',def:'Sets the base interest rate, regulates banks and maintains financial stability'},
+  {id:'dbt',term:'Dept for Business & Trade',def:'Government lead for supporting business growth, investment and UK trade policy'},
+  {id:'sbc',term:'Small Business Commissioner',def:'Helps small businesses resolve late payment disputes with larger companies'}
+];
+
+const PED_QUESTIONS=[
+  {
+    type:'mc',
+    q:'A price elasticity of demand of <strong>0.5</strong> means that demand is:',
+    opts:[
+      {text:'Price inelastic — quantity demanded changes by less than the price change',correct:true},
+      {text:'Price elastic — quantity demanded changes by more than the price change',correct:false},
+      {text:'Unit elastic — quantity changes by exactly the same proportion as price',correct:false},
+      {text:'Perfectly inelastic — demand does not change at all',correct:false}
+    ],
+    expl:'|PED| = 0.5 &lt; 1 → inelastic. A 1% price change causes only a 0.5% change in quantity demanded.',
+    pts:15
+  },
+  {
+    type:'mc',
+    q:'A price elasticity of demand of <strong>3.4</strong> means that demand is:',
+    opts:[
+      {text:'Price elastic — quantity demanded changes by more than the price change',correct:true},
+      {text:'Price inelastic — quantity demanded changes by less than the price change',correct:false},
+      {text:'Unit elastic — quantity changes by exactly the same proportion as price',correct:false},
+      {text:'Perfectly elastic — even a tiny price rise causes demand to fall to zero',correct:false}
+    ],
+    expl:'|PED| = 3.4 &gt; 1 → elastic. A 1% price change causes a 3.4% change in quantity demanded.',
+    pts:15
+  },
+  {
+    type:'mc',
+    q:'PED = <strong>1.7</strong>. The price <strong>increases by 20%</strong>. How much will the demanded quantity change?',
+    opts:[
+      {text:'−34% (demand falls by 34%)',correct:true},
+      {text:'+34% (demand rises by 34%)',correct:false},
+      {text:'−3.4% (demand falls by 3.4%)',correct:false},
+      {text:'−21.7% (demand falls by 21.7%)',correct:false}
+    ],
+    expl:'% Δ Qty = PED × % Δ Price (opposite direction) = 1.7 × 20% = 34%. Price rose → demand falls → <strong>−34%</strong>.',
+    pts:18
+  },
+  {
+    type:'mc',
+    q:'PED = <strong>0.8</strong>. The price <strong>decreases by 17%</strong>. How much will the demanded quantity change?',
+    opts:[
+      {text:'+13.6% (demand rises by 13.6%)',correct:true},
+      {text:'−13.6% (demand falls by 13.6%)',correct:false},
+      {text:'+17.8% (demand rises by 17.8%)',correct:false},
+      {text:'−23% (demand falls by 23%)',correct:false}
+    ],
+    expl:'% Δ Qty = PED × % Δ Price (opposite direction) = 0.8 × 17% = 13.6%. Price fell → demand rises → <strong>+13.6%</strong>.',
+    pts:18
+  },
+  {
+    type:'mc',
+    q:'On a demand curve, at <strong>Price = £18, Quantity = 5,000</strong> (Point A) and at <strong>Price = £8, Quantity = 12,000</strong> (Point B). Which point gives higher total revenue and why?',
+    opts:[
+      {text:'Point B — £96,000 is greater than Point A\'s £90,000',correct:true},
+      {text:'Point A — higher price always means higher revenue',correct:false},
+      {text:'They are equal — moving along a straight demand curve keeps revenue constant',correct:false},
+      {text:'Point A — lower quantity always means higher revenue',correct:false}
+    ],
+    expl:'TR at A = 18 × 5,000 = <strong>£90,000</strong>. TR at B = 8 × 12,000 = <strong>£96,000</strong>. Point B gives higher total revenue — demand is elastic in this range.',
+    pts:17
+  },
+  {
+    type:'mc',
+    q:'Looking at a Temu product listing showing "UP TO 70% OFF", strikethrough RRP prices, and "LIGHTNING DEALS" with a "Shop Now" button — which consumer behaviour tactic is <strong>NOT</strong> being used?',
+    opts:[
+      {text:'Anchoring using RRP strikethrough prices',correct:false},
+      {text:'Time pressure via Lightning Deals and urgency language',correct:false},
+      {text:'Penetration pricing to undercut all competitors permanently',correct:true},
+      {text:'Social proof through star ratings and review counts',correct:false}
+    ],
+    expl:'Penetration pricing is a long-run strategy, not a behavioural tactic. Temu\'s listing uses anchoring, time pressure (urgency), and social proof — all exploiting bounded rationality.',
+    pts:17
+  }
+];
+
+const TF2_BANK=[
+  {q:'A pure public good is non-rival and non-excludable in consumption.',ans:true,expl:'Correct. Non-rival (one person\'s use doesn\'t reduce availability) + non-excludable (can\'t stop non-payers) = pure public good.'},
+  {q:'Healthcare is always a pure public good because it benefits society.',ans:false,expl:'Healthcare is rival (doctors\' time is limited) and can be excludable (private hospitals). It may be publicly provided, but is not a "public good" in the economic sense.'},
+  {q:'The free rider problem means people consume a public good without contributing to its cost.',ans:true,expl:'Correct. Because non-payers cannot be excluded, rational individuals have no incentive to pay voluntarily — hence public provision is needed.'},
+  {q:'Club goods are non-rival but excludable.',ans:true,expl:'Correct. Netflix can exclude non-subscribers (excludable), but one person watching a show doesn\'t stop another from watching (non-rival).'},
+  {q:'A monopoly always harms consumers and should always be broken up.',ans:false,expl:'Not always. Temporary monopolies may reward innovation and investment. Natural monopolies (e.g. water pipes) may be more efficient as a single provider.'},
+  {q:'Common resources are rival but non-excludable.',ans:true,expl:'Correct. Fish in the ocean can be depleted (rival) but nobody can realistically be stopped from fishing in international waters (non-excludable).'},
+  {q:'The government only needs to intervene when a market failure is severe AND the cost of intervention is less than the cost of the failure.',ans:true,expl:'Correct. Intervention has its own costs and distortions. Intervention is only justified when it improves on the market outcome overall.'},
+  {q:'Perfectly non-rival and perfectly non-excludable goods are common in the real world.',ans:false,expl:'Pure public goods are actually rare. Most real-world goods have varying degrees of rivalry and excludability (e.g. congested roads, partially excludable parks).'}
+];
+
+const SCENARIOS3=[
+  {
+    q:'🏭 <strong>Scenario A</strong><br>A cement factory opens near a village. Local residents complain of dust, noise and reduced property values. The factory owners say they are operating legally and creating jobs.<br><br>What type of market failure is this, and what would be an appropriate government response?',
+    correct:'Negative externality — the factory imposes costs on third parties. Government should tax or regulate the factory to internalise the external costs.',
+    wrongs:['Public good problem — the factory is not providing a public good so government should subsidise it.','Monopoly — the factory dominates the local cement market and prices should be capped.','No market failure — legal operation means the market is working efficiently.'],
+    expl:'This is a classic <strong>negative externality</strong>. The factory\'s costs fall partly on residents (dust, noise, lower property values) who are not party to the market transaction. A Pigouvian tax or regulation can force the factory to account for these social costs.',
+    pts:50
+  },
+  {
+    q:'💉 <strong>Scenario B</strong><br>A biotech company develops a new vaccine. It provides immunity to the vaccinated person, but also reduces the risk of transmission to unvaccinated people (herd immunity). The company charges a high price, resulting in low uptake.<br><br>What market failure is occurring, and how should government respond?',
+    correct:'Positive externality — vaccination benefits third parties beyond the person vaccinated. Government should subsidise or provide the vaccine to increase uptake to the socially optimal level.',
+    wrongs:['Monopoly — the biotech company is the only producer and prices should be regulated to zero.','Public good problem — the vaccine is non-rival and non-excludable so only government can provide it.','No market failure — high prices reflect the cost of R&D and the market is working correctly.'],
+    expl:'Vaccination creates a <strong>positive externality</strong> (herd immunity). The private market underproduces because the vaccinated person does not capture all the benefits — others benefit too. Government subsidy (or direct provision) can increase uptake to the socially optimal level.',
+    pts:50
+  },
+  {
+    q:'🛣️ <strong>Scenario C</strong><br>A city\'s road network is publicly provided and free to use. During rush hour, roads become severely congested. Non-rush-hour roads are practically empty.<br><br>What good classification issue does this raise?',
+    correct:'Roads shift from a club/public good (off-peak: non-rival) to a common resource (peak: rival) when congested — illustrating that goods can change classification depending on circumstances.',
+    wrongs:['Roads are a pure public good because everyone can use them at all times.','Roads are a private good because they are owned by the government and can be charged for.','Roads are a club good because access can be restricted with toll gates.'],
+    expl:'This illustrates the complexity of real-world public goods. Off-peak, roads are effectively <strong>non-rival</strong> (like a public good or club good). At peak, they become <strong>rival</strong> (more like a common resource). Congestion charging is a policy response that reintroduces excludability.',
+    pts:50
+  }
+];
+
+// ─── STATE ───────────────────────────────────────────────────────────────────
+var ST={name:'',startTime:null,timerInt:null,curModule:0,totalScore:0,modScores:[0,0,0,0,0],completed:false,lastAct:Date.now()};
+var attempts={};
+function getAtt(k){return attempts[k]||0;}
+function incAtt(k){attempts[k]=(attempts[k]||0)+1;return attempts[k];}
+var selId=null,selMod=null;
+var SESSION={m1Items:null,m2Items:null,m3Items:null,m4Items:null};
+
+// ─── SESSION ─────────────────────────────────────────────────────────────────
+function saveLB(){if(!ST.name)return;try{var e={name:ST.name,score:Math.round(ST.totalScore),module:ST.curModule,time:ST.startTime?Math.floor((Date.now()-ST.startTime)/1000):0,completed:ST.completed,lastUpdate:Date.now()};var lb=JSON.parse(localStorage.getItem('aru_lb_gov')||'[]');var i=lb.findIndex(s=>s.name===ST.name);if(i>=0)lb[i]=e;else lb.push(e);lb.sort((a,b)=>b.score-a.score);localStorage.setItem('aru_lb_gov',JSON.stringify(lb));}catch(e){}}
+function renderLB(id){try{var lb=JSON.parse(localStorage.getItem('aru_lb_gov')||'[]');lb.sort((a,b)=>b.score-a.score);var el=document.getElementById(id);if(!el)return;if(!lb.length){el.innerHTML='<div style="color:#888;text-align:center;padding:14px;font-size:13px;">No entries yet.</div>';return;}var ll=document.getElementById('landLB');if(ll&&lb.length)ll.style.display='block';el.innerHTML=lb.slice(0,10).map((s,i)=>'<div class="lb-row '+(s.name===ST.name?'me':'')+'"><div class="lb-rank">'+(['🥇','🥈','🥉'][i]||i+1)+'</div><div class="lb-name">'+esc(s.name)+(s.name===ST.name?' (You)':'')+'</div><div class="lb-mod">Mod '+s.module+'</div><div class="lb-score">'+Math.round(s.score)+'pts</div></div>').join('');}catch(e){}}
+function startTimer(){ST.startTime=Date.now();ST.timerInt=setInterval(function(){var rem=Math.max(0,3600-Math.floor((Date.now()-ST.startTime)/1000));var m=Math.floor(rem/60),s=rem%60;var el=document.getElementById('timerEl');if(el){el.textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');el.className='htimer'+(rem<600?' warn':'')+(rem<300?' danger':'');}if(rem===0){clearInterval(ST.timerInt);alert('⏱ Time up! Score: '+Math.round(ST.totalScore)+'/500');}saveLB();},1000);}
+function startSession(){var inp=document.getElementById('nameIn');var name=(inp.value||'').trim();if(!name||name.length<2){document.getElementById('nameErr').style.display='block';inp.focus();return;}document.getElementById('nameErr').style.display='none';ST.name=name;document.getElementById('badgeEl').textContent=name.split(' ')[0];document.getElementById('appHeader').style.display='flex';document.getElementById('progressBar').style.display='block';buildSessionSets();saveLB();startTimer();goScreen('m1');updateProg(1);initM1();}
+function buildSessionSets(){SESSION.m1Items=pickFromZones(M1_BANK,4);SESSION.m2Items=pickFromZones(M2_BANK,3);SESSION.m3Items=pickFromZones({positive:M3_BANK.positive,negative:M3_BANK.negative},4);SESSION.m4Items=shuffle(M4_BANK).slice(0,8);}
+function goScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));var el=document.getElementById('s-'+id);if(el)el.classList.add('active');window.scrollTo(0,0);}
+function updateProg(n){ST.curModule=n;document.getElementById('pfill').style.width=(((n-1)/5)*100)+'%';for(var i=0;i<5;i++){var l=document.getElementById('pl'+i);l.className='plabel'+(i<n-1?' done':i===n-1?' cur':'');}saveLB();}
+function nextModule(n,forced){if(n<5){var nx=n+1;goScreen('m'+nx);updateProg(nx);if(nx===2)initM2();else if(nx===3)initM3();else if(nx===4)initM4();else if(nx===5)initM5();}else{ST.completed=true;clearInterval(ST.timerInt);saveLB();showFinal();}}
+function addPts(mod,pts){var cap=100;var ok=Math.min(pts,cap-ST.modScores[mod-1]);if(ok<=0)return;ST.modScores[mod-1]=Math.round((ST.modScores[mod-1]+ok)*100)/100;ST.totalScore=Math.round((ST.totalScore+ok)*100)/100;ST.lastAct=Date.now();var el=document.getElementById('m'+mod+'ScoreEl');if(el)el.textContent=Math.round(ST.modScores[mod-1])+' / 100';popPts(ok);saveLB();}
+
+// ─── DRAG CARD SYSTEM ─────────────────────────────────────────────────────────
+function makeCard(item,poolId,modKey){var el=document.createElement('div');el.className='dcard';el.textContent=item.text;el.id='card-'+modKey+'-'+item.id;el.dataset.cid=item.id;el.dataset.cmod=modKey;el.onclick=()=>selectCard(item.id,modKey,el);document.getElementById(poolId).appendChild(el);}
+function selectCard(id,mod,el){if(el.classList.contains('placed-correct')||el.classList.contains('placed-revealed'))return;if(selId){var p=document.getElementById('card-'+selMod+'-'+selId);if(p)p.classList.remove('selected-card');}if(selId===id&&selMod===mod){selId=null;selMod=null;return;}selId=id;selMod=mod;el.classList.add('selected-card');document.querySelectorAll('.dzone').forEach(z=>z.classList.add('hover-active'));ST.lastAct=Date.now();}
+function zoneClick(mod,zone){if(!selId||selMod!==mod){document.querySelectorAll('.dzone').forEach(z=>{z.style.borderColor='#c9a84c';setTimeout(()=>z.style.borderColor='',600);});return;}document.querySelectorAll('.dzone').forEach(z=>z.classList.remove('hover-active'));var iid=selId;var cel=document.getElementById('card-'+mod+'-'+iid);if(cel)cel.classList.remove('selected-card');selId=null;selMod=null;placeCard(mod,iid,zone);}
+function placeCard(mod,itemId,zone){var items,fb,sm,mp,oac,rl,rb;
+if(mod==='m1'){items=SESSION.m1Items;sm=1;mp=8;fb='m1FB';oac=m1Complete;rl='m1ReviewList';rb='m1Review';}
+else if(mod==='m2'){items=SESSION.m2Items;sm=2;mp=10;fb='m2aFB';oac=m2aComplete;rl='m2aReviewList';rb='m2aReview';}
+else if(mod==='m3'){items=SESSION.m3Items;sm=3;mp=10;fb='m3aFB';oac=m3aComplete;rl='m3aReviewList';rb='m3aReview';}
+var item=items.find(i=>i.id===itemId);if(!item)return;var att=incAtt(mod+'-'+itemId);var cel=document.getElementById('card-'+mod+'-'+item.id);var pts=calcPoints(att,mp);
+if(item.zone===zone){if(cel){cel.classList.remove('selected-card');cel.classList.add('placed-correct');}var zi=document.getElementById('zi-'+mod+'-'+zone);if(zi&&cel)zi.appendChild(cel);addPts(sm,pts);var al=att===1?'🥇 1st!':att===2?'✅ 2nd':'✅ 3rd';showFB(fb,'ok','✅ Correct! "'+item.text+'" ('+Math.round(pts)+' pts '+al+')');checkAllPlaced(mod,items,oac);}
+else{if(cel){cel.classList.add('placed-wrong');setTimeout(()=>cel.classList.remove('placed-wrong'),600);}
+if(att===1)showFB(fb,'err','❌ Not quite. Try a different category. (2nd = '+Math.round(mp*.5)+' pts)');
+else if(att===2)showFB(fb,'err','❌ Still not right. Last attempt for '+Math.round(mp*.25)+' pts!');
+else if(att>=3){if(cel){cel.classList.remove('selected-card');cel.classList.add('placed-revealed');}var czi=document.getElementById('zi-'+mod+'-'+item.zone);if(czi&&cel)czi.appendChild(cel);showFB(fb,'warn','💡 Revealed: "'+item.text+'" → <strong>'+item.zone+'</strong>. No points.');var rle=document.getElementById(rl);var rbe=document.getElementById(rb);if(rle){var d=document.createElement('div');d.className='review-item';d.innerHTML='⚠️ <strong>"'+esc(item.text)+'"</strong> → '+item.zone;rle.appendChild(d);}if(rbe)rbe.classList.add('show');checkAllPlaced(mod,items,oac);}}}
+function checkAllPlaced(mod,items,cb){if(items.every(i=>{var c=document.getElementById('card-'+mod+'-'+i.id);return c&&(c.classList.contains('placed-correct')||c.classList.contains('placed-revealed'));}))if(cb)cb();}
+
+// ─── MODULE 1 ─────────────────────────────────────────────────────────────────
+function initM1(){var p=document.getElementById('m1Pool');p.innerHTML='';SESSION.m1Items.forEach(i=>makeCard(i,'m1Pool','m1'));}
+function m1Complete(){var rev=SESSION.m1Items.filter(i=>getAtt('m1-'+i.id)>=4);if(!rev.length)addPts(1,4);showFB('m1FB','ok','🎉 All placed! '+(rev.length?'Review flagged items above.':'Perfect round — bonus +4 pts!'));document.getElementById('m1Next').classList.remove('btn-hidden');}
+
+// ─── MODULE 2 ─────────────────────────────────────────────────────────────────
+var tf2Answers=[],tf2Attempts=[];
+function initM2(){var p=document.getElementById('m2Pool');p.innerHTML='';SESSION.m2Items.forEach(i=>makeCard(i,'m2Pool','m2'));}
+function m2aComplete(){showFB('m2aFB','ok','✅ All classified! Now test your knowledge below.');document.getElementById('m2PartEl').textContent='Part B';setTimeout(()=>{document.getElementById('m2pb').style.display='block';loadTF2();},700);}
+function loadTF2(){var items=pick(TF2_BANK,6);SESSION.tf2Items=items;tf2Answers=new Array(6).fill(null);tf2Attempts=[];document.getElementById('tfScore2').textContent='0/6';document.getElementById('m2Retry').classList.add('btn-hidden');document.getElementById('m2bFB').className='fb';renderTF2();}
+function renderTF2(){document.getElementById('tfContainer2').innerHTML=SESSION.tf2Items.map((q,i)=>'<div class="tfq" id="tfq2-'+i+'"><div class="tfqtext">'+(i+1)+'. '+q.q+'</div><div style="font-size:11px;color:#999;margin-bottom:8px;">Attempts left: <span id="tfatt2-'+i+'">3</span> · Points: <span id="tfpts2-'+i+'">8</span></div><div class="tfbtns"><button class="tfbtn tfbtn-t" onclick="answerTF2('+i+',true,this)">TRUE</button><button class="tfbtn tfbtn-f" onclick="answerTF2('+i+',false,this)">FALSE</button></div><div class="hint-box" id="tfh2-'+i+'" style="background:#fff8e1;border:1px solid #f0c040;border-radius:7px;padding:10px 14px;font-size:13px;margin:10px 0;display:none;gap:8px;align-items:flex-start;line-height:1.5;"><span>💡</span><span>'+q.expl+'</span></div></div>').join('');}
+function answerTF2(i,ans,btn){if(!tf2Attempts[i])tf2Attempts[i]=0;if(tf2Answers[i]===true)return;var q=SESSION.tf2Items[i];tf2Attempts[i]++;var att=tf2Attempts[i];var pts=calcPoints(att,8);var qEl=document.getElementById('tfq2-'+i);var ae=document.getElementById('tfatt2-'+i);var pe=document.getElementById('tfpts2-'+i);if(ans===q.ans){tf2Answers[i]=true;btn.classList.add('sel-ok');qEl.classList.add('ok');qEl.querySelectorAll('.tfbtn').forEach(b=>b.disabled=true);addPts(2,pts);var hb=document.getElementById('tfh2-'+i);if(hb){hb.style.display='flex';}showFB('m2bFB','ok','✅ Correct! +'+Math.round(pts)+' pts');}else{btn.classList.add('sel-err');setTimeout(()=>btn.classList.remove('sel-err'),500);if(att>=3){qEl.querySelectorAll('.tfbtn').forEach(b=>{b.disabled=true;if((b.classList.contains('tfbtn-t')&&q.ans===true)||(b.classList.contains('tfbtn-f')&&q.ans===false))b.classList.add('sel-ok');});tf2Answers[i]=false;qEl.classList.add('wrong');var hb=document.getElementById('tfh2-'+i);if(hb){hb.style.display='flex';}if(ae)ae.textContent='0';if(pe)pe.textContent='0';showFB('m2bFB','warn','💡 Revealed: '+q.expl+' (0 pts)');}else{var rem=3-att;if(ae)ae.textContent=rem;if(pe)pe.textContent=Math.round(calcPoints(att+1,8));showFB('m2bFB','err','❌ Incorrect. '+rem+' attempt'+(rem>1?'s':'')+' left.');}}var answered=tf2Answers.filter(a=>a!==null).length;document.getElementById('tfScore2').textContent=tf2Answers.filter(a=>a===true).length+'/'+answered;if(answered===6)checkTF2Done();ST.lastAct=Date.now();}
+function checkTF2Done(){var c=tf2Answers.filter(a=>a===true).length;if(c>=5){showFB('m2bFB','ok','🎉 '+c+'/6 — gate passed!');document.getElementById('m2Next').classList.remove('btn-hidden');}else{showFB('m2bFB','err','❌ '+c+'/6 — need 5/6. Retry below.');document.getElementById('m2Retry').classList.remove('btn-hidden');tf2Attempts=[];}}
+
+// ─── MODULE 3 ─────────────────────────────────────────────────────────────────
+var scen3Idx=0,scen3Atts=[];
+function initM3(){var p=document.getElementById('m3Pool');p.innerHTML='';SESSION.m3Items.forEach(i=>makeCard(i,'m3Pool','m3'));}
+function m3aComplete(){showFB('m3aFB','ok','✅ Externalities classified! Now test deeper understanding.');document.getElementById('m3PartEl').textContent='Part B';setTimeout(()=>{document.getElementById('m3pb').style.display='block';initScenarios3();},700);}
+function initScenarios3(){scen3Idx=0;scen3Atts=SCENARIOS3.map(()=>0);renderNextScenario3();}
+function renderNextScenario3(){if(scen3Idx>=SCENARIOS3.length){showFB('m3bFB','ok','🎉 All scenarios complete!');document.getElementById('m3Next').classList.remove('btn-hidden');return;}var sc=SCENARIOS3[scen3Idx];var opts=shuffle([{text:sc.correct,correct:true},...sc.wrongs.map(w=>({text:w,correct:false}))]);document.getElementById('scenContainer3').innerHTML='<div style="background:#f5f2e8;border-radius:9px;padding:10px 14px;margin-bottom:10px;font-size:12px;color:#888;">Scenario '+(scen3Idx+1)+' of '+SCENARIOS3.length+' · '+Math.round(sc.pts/3)+' pts first attempt</div><div style="background:#1a2744;color:#fff;border-radius:9px;padding:16px 18px;margin-bottom:14px;font-size:14px;line-height:1.6;">'+sc.q+'</div><div class="sopts">'+opts.map(o=>'<button class="sopt" onclick="checkScenario3(this,'+o.correct+')">'+esc(o.text)+'</button>').join('')+'</div>';}
+function checkScenario3(btn,correct){var sc=SCENARIOS3[scen3Idx];scen3Atts[scen3Idx]++;var att=scen3Atts[scen3Idx];var pts=calcPoints(att,Math.round(sc.pts/3));var opts=document.querySelectorAll('#scenContainer3 .sopt');if(correct){btn.classList.add('ok');opts.forEach(o=>o.disabled=true);addPts(3,pts);showFB('m3bFB','ok','✅ Correct! +'+Math.round(pts)+' pts. '+sc.expl);scen3Idx++;setTimeout(renderNextScenario3,1200);}else{btn.classList.add('err');setTimeout(()=>btn.classList.remove('err'),700);if(att>=3){opts.forEach(o=>o.disabled=true);showFB('m3bFB','warn','💡 '+sc.expl+' (0 pts)');scen3Idx++;setTimeout(renderNextScenario3,1400);}else{var rem=3-att;showFB('m3bFB','err','❌ Not quite. '+rem+' attempt'+(rem>1?'s':'')+' left.');}}}
+
+// ─── MODULE 4 ─────────────────────────────────────────────────────────────────
+var matchSel4=null,matchDone4=0,matchAtts4={};
+function initM4(){var te=document.getElementById('mTerms4');var de=document.getElementById('mDefs4');te.innerHTML='';de.innerHTML='';matchDone4=0;matchSel4=null;matchAtts4={};SESSION.m4Items.forEach(t=>{var el=document.createElement('div');el.className='mterm';el.textContent=t.term;el.dataset.mid=t.id;el.onclick=()=>matchTermClick4(el);te.appendChild(el);matchAtts4[t.id]=0;});shuffle(SESSION.m4Items).forEach(t=>{var el=document.createElement('div');el.className='mdef';el.textContent=t.def;el.dataset.mid=t.id;el.onclick=()=>matchDefClick4(el);de.appendChild(el);});}
+function matchTermClick4(el){if(el.classList.contains('matched')||el.classList.contains('match-revealed'))return;document.querySelectorAll('.mterm.sel').forEach(e=>e.classList.remove('sel'));if(matchSel4===el.dataset.mid){matchSel4=null;return;}el.classList.add('sel');matchSel4=el.dataset.mid;}
+function matchDefClick4(el){if(!matchSel4)return;if(el.classList.contains('matched')||el.classList.contains('match-revealed'))return;var tid=matchSel4;var did=el.dataset.mid;matchAtts4[tid]=(matchAtts4[tid]||0)+1;var att=matchAtts4[tid];var pts=calcPoints(att,12);var te=document.querySelector('#mTerms4 .mterm[data-mid="'+tid+'"]');if(tid===did){te.classList.remove('sel');te.classList.add('matched');el.classList.add('matched');matchSel4=null;addPts(4,pts);matchDone4++;document.getElementById('m4PairsEl').textContent=matchDone4+' / '+SESSION.m4Items.length;showFB('m4FB','ok','✅ Match! +'+Math.round(pts)+' pts ('+matchDone4+'/'+SESSION.m4Items.length+')');if(matchDone4===SESSION.m4Items.length){showFB('m4FB','ok','🎉 All matched!');document.getElementById('m4Next').classList.remove('btn-hidden');}}else{te.classList.add('match-err');el.classList.add('match-err');setTimeout(()=>{te.classList.remove('match-err','sel');el.classList.remove('match-err');matchSel4=null;},600);if(att>=3){var cd=document.querySelector('#mDefs4 .mdef[data-mid="'+tid+'"]');te.classList.remove('sel');te.classList.add('match-revealed');if(cd)cd.classList.add('match-revealed');matchDone4++;matchSel4=null;document.getElementById('m4PairsEl').textContent=matchDone4+' / '+SESSION.m4Items.length;showFB('m4FB','warn','💡 Revealed: "'+SESSION.m4Items.find(t=>t.id===tid)?.term+'" (0 pts).');var rle=document.getElementById('m4ReviewList');var rbe=document.getElementById('m4Review');if(rle){var t=SESSION.m4Items.find(t=>t.id===tid);var d=document.createElement('div');d.className='review-item';d.innerHTML='⚠️ <strong>'+esc(t.term)+'</strong>: '+esc(t.def);rle.appendChild(d);}if(rbe)rbe.classList.add('show');if(matchDone4===SESSION.m4Items.length){document.getElementById('m4Next').classList.remove('btn-hidden');}}else{var rem=3-att;showFB('m4FB','err','❌ No match. '+rem+' attempt'+(rem>1?'s':'')+' left.');}}ST.lastAct=Date.now();}
+
+// ─── MODULE 5: PED ────────────────────────────────────────────────────────────
+var pedAtts=[],pedDone=0;
+function initM5(){pedAtts=PED_QUESTIONS.map(()=>0);pedDone=0;renderPEDQuestions();}
+function renderPEDQuestions(){var html='';PED_QUESTIONS.forEach((q,i)=>{var opts=shuffle(q.opts.map((o,j)=>({...o,origIdx:j})));html+='<div style="background:#f5f2e8;border-radius:11px;padding:16px;margin-bottom:16px;border:2px solid #ede9d8;" id="pedq-'+i+'">';html+='<div style="font-size:11px;color:#c9a84c;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Question '+(i+1)+' of '+PED_QUESTIONS.length+' · '+q.pts+' pts</div>';html+='<div style="font-size:14px;font-weight:600;margin-bottom:12px;line-height:1.5;">'+q.q+'</div>';html+='<div class="sopts" id="pedopts-'+i+'">'+opts.map(o=>'<button class="sopt" onclick="checkPED('+i+','+o.correct+',this)">'+esc(o.text)+'</button>').join('')+'</div>';html+='<div class="fb" id="pedfb-'+i+'"></div>';html+='</div>';});document.getElementById('pedContainer').innerHTML=html;}
+function checkPED(i,correct,btn){pedAtts[i]++;var att=pedAtts[i];var q=PED_QUESTIONS[i];var pts=calcPoints(att,q.pts);var opts=document.querySelectorAll('#pedopts-'+i+' .sopt');if(correct){btn.classList.add('ok');opts.forEach(o=>o.disabled=true);addPts(5,pts);pedDone++;document.getElementById('m5QEl').textContent=pedDone+' / '+PED_QUESTIONS.length;showFB('pedfb-'+i,'ok','✅ Correct! +'+Math.round(pts)+' pts — '+q.expl);if(pedDone===PED_QUESTIONS.length){showFB('pedfb-'+(PED_QUESTIONS.length-1),'ok','🎉 All questions answered!');document.getElementById('m5Next').classList.remove('btn-hidden');}}else{btn.classList.add('err');setTimeout(()=>btn.classList.remove('err'),700);if(att>=3){opts.forEach(o=>o.disabled=true);showFB('pedfb-'+i,'warn','💡 '+q.expl+' (0 pts)');pedDone++;document.getElementById('m5QEl').textContent=pedDone+' / '+PED_QUESTIONS.length;if(pedDone===PED_QUESTIONS.length)document.getElementById('m5Next').classList.remove('btn-hidden');}else{var rem=3-att;showFB('pedfb-'+i,'err','❌ Not quite. '+rem+' attempt'+(rem>1?'s':'')+' left.');}}}
+
+// ─── FINAL ────────────────────────────────────────────────────────────────────
+function showFinal(){goScreen('final');document.getElementById('certName').textContent=ST.name;document.getElementById('certScore').textContent=Math.round(ST.totalScore);var names=['Market Failures','Public Goods','Externalities','UK Gov Bodies','PED & Consumers'];document.getElementById('finalMods').innerHTML=ST.modScores.map((s,i)=>'<div class="fmod"><div class="fmod-n">Mod '+(i+1)+'</div><div style="font-size:9px;color:#aaa;margin-bottom:4px;">'+names[i]+'</div><div class="fmod-s">'+Math.round(s)+'</div><div class="fmod-m">/ 100</div></div>').join('');renderLB('finalLBBody');document.getElementById('pfill').style.width='100%';for(var i=0;i<5;i++)document.getElementById('pl'+i).className='plabel done';}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded',function(){try{var lb=JSON.parse(localStorage.getItem('aru_lb_gov')||'[]');if(lb.length){document.getElementById('landLB').style.display='block';renderLB('landLBBody');}}catch(e){}document.getElementById('nameIn').addEventListener('keydown',function(e){if(e.key==='Enter')startSession();});});
+</script>
+
+</body>
+</html>
